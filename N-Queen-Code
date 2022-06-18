@@ -1,0 +1,93 @@
+problem-->
+You are given N, and for a given N x N chessboard, find a way to place N queens such that no queen can attack any other queen on the chess board. 
+A queen can be killed when it lies in the same row, or same column, or the same diagonal of any of the other queens. 
+You have to print all such configurations.
+Note: Don't print anything if there isn't any valid configuration.
+
+Input Format:
+
+The first line of input contains an integer, that denotes the value of N. 
+
+Output Format :
+
+In the output, you have to print every board configuration in a new line.
+Every configuration will have N*N board elements printed row wise and are separated by space.
+The cells where queens are safe and placed, are denoted by value 1 and remaining all cells are denoted by value 0.
+Please refer to sample test cases for more clarity.
+Constraints :
+1 <= N <= 10
+
+Time Limit: 1 second
+
+Sample Input 1:
+4
+
+Sample Output 1 :
+0 1 0 0 0 0 0 1 1 0 0 0 0 0 1 0 
+0 0 1 0 1 0 0 0 0 0 0 1 0 1 0 0 
+
+Explanation:
+The first and second configuration are shown in the image below. 
+Here, 1 denotes the placement of a queen and 0 denotes an empty cell. 
+Please note that in both the configurations, no pair of queens can kill each other. 
+
+code----->>>>>>>>>
+
+#include<bits/stdc++.h>
+#include<iostream>
+#include<cstring>
+using namespace std;
+int board[11][11];
+
+bool isPossible(int totalR,int presentR,int colm){
+    for(int i=presentR-1;i>=0;i--){
+        if(board[i][colm]==1)                     //if any queen in same column
+            return false;
+    }
+    int k=presentR-1;
+    int t=colm-1;                                 //if any queen in upper left diagonal(we only need to check the upper diagonals only)
+    while(k>=0 && t>=0){
+        if(board[k][t]==1)
+            return false;
+        k--;t--;
+    }
+    int i=presentR-1;                             //if any queen is present in the right upper diagonal
+    int j=colm+1;
+    while(i>=0 && j<=totalR){
+        if(board[i][j]==1)
+            return false;
+        i--;j++;
+    }
+    return true;                                //position is safe to place a Queen.
+} 
+void nQueenhelper(int totalRows,int presentRow){
+    
+    
+    if(totalRows==presentRow){                            //base-case---->>>>>> you have completed adding queen to the last row 
+                                                           //  now you have to print this configuration.
+        for(int i=0;i<totalRows;i++){
+            for(int j=0;j<totalRows;j++){
+                cout<<board[i][j]<<" ";
+            }
+        }
+        cout<<endl;
+        return ;
+    }
+    for(int j=0;j<totalRows;j++){
+        if(isPossible(totalRows,presentRow,j)){             //check if it is a possible place where a queen can be inserted.
+            board[presentRow][j]=1;                         //if "yes" add 1 at the index.
+            nQueenhelper(totalRows,presentRow+1);           //recursion(goto smaller problem) i.e insertQueen in next row.
+            board[presentRow][j]=0;                         //again reset for next queens placement configuration.
+        }
+    }
+    return;
+}
+void nQueenpb(int n){
+    memset(board,0,11*11*sizeof(int)); //set the value of all element to be 0
+    nQueenhelper(n,0); 
+}
+int main(){
+    int n;
+    cin>>n;
+    nQueenpb(n);
+}
